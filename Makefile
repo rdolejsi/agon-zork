@@ -1,13 +1,16 @@
 # Makefile for dungeon
+NAME = zork
+DESCRIPTION = "Zork Dungeon v1"
+COMPRESSED = NO
 
 # Where to install the program
-BINDIR = /usr/games
+BINDIR = dist
 
 # Where to install the data file
-DATADIR = /usr/games/lib
+DATADIR = dist/lib
 
 # Where to install the man page
-MANDIR = /usr/share/man
+MANDIR = dist/man
 
 # The dungeon program provides a ``more'' facility which tries to
 # figure out how many rows the terminal has.  Several mechanisms are
@@ -45,11 +48,14 @@ TERMFLAG =
 GDTFLAG = -DALLOW_GDT
 
 # Compilation flags
-CFLAGS = -g #-static
+CFLAGS = -Wall -Wextra -Oz -D__LOCAL_TEXTFILE__ -D__AGON__ -v #-g #-static
 # On SCO Unix Development System 3.2.2a, the const type qualifier does
 # not work correctly when using cc.  The following line will cause it
 # to not be used and should be uncommented.
 # CFLAGS= -O -Dconst=
+
+SRCDIR=.
+include $(shell cedev-config --makefile)
 
 ##################################################################
 
@@ -75,7 +81,7 @@ install: zork dtextc.dat
 	cp dungeon.6 $(MANDIR)/man6/
 
 clean:
-	rm -f $(OBJS) zork core dsave.dat *~
+	rm -f $(OBJS) zork core dsave.dat *~ obj/*~ obj/*.c.d obj/*.c.bc obj/lto.bc obj/*.src dist/*.bin
 
 dtextc.dat:
 	cat dtextc.uu1 dtextc.uu2 dtextc.uu3 dtextc.uu4 | uudecode
