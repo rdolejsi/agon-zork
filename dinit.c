@@ -23,11 +23,15 @@ FILE *dbfile;
 #ifdef __AMOS__
 #define TEXTFILE "lib:dtextc.dat"
 #else /* ! __AMOS__ */
+#ifdef __LOCAL_TEXTFILE__
+#define TEXTFILE "Zork.dat"
+#else /* ! __LOCAL_TEXTFILE__ */
 #ifdef unix
 #define TEXTFILE "/usr/games/lib/dunlib/dtextc.dat"
 #else /* ! unix */
- I need a definition for TEXTFILE
+ undefined TEXTFILE "I need a definition for TEXTFILE"
 #endif /* ! unix */
+#endif /* ! __LOCAL_TEXTFILE__ */
 #endif /* ! __AMOS__ */
 #endif /* ! TEXTFILE */
 
