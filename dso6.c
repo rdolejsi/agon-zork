@@ -17,113 +17,75 @@ integer rm;
     ret_val = TRUE_;
 /* 						!ASSUME WINS. */
     switch (obj - star_1.strbit) {
-	case 1:  goto L1000;
-	case 2:  goto L1000;
-	case 3:  goto L1000;
-	case 4:  goto L1000;
-	case 5:  goto L1000;
-	case 6:  goto L1000;
-	case 7:  goto L1000;
-	case 8:  goto L1000;
-	case 9:  goto L1000;
-	case 10:  goto L1000;
-	case 11:  goto L1000;
-	case 12:  goto L2000;
-	case 13:  goto L3000;
-	case 14:  goto L4000;
-	case 15:  goto L5000;
-	case 16:  goto L5000;
-	case 17:  goto L5000;
-	case 18:  goto L6000;
-	case 19:  goto L7000;
-	case 20:  goto L8000;
-	case 21:  goto L9000;
-	case 22:  goto L9100;
-	case 23:  goto L8000;
-	case 24:  goto L10000;
-	case 25:  goto L11000;
+        // agon-zork update: switch rewritten with all Gotos internalized
+        // this avoids linker issue on legalizing instruction %61:_(s15) = G_AND %59:_, %60:_
+	case 1:
+	case 2:
+	case 3:
+	case 4:
+	case 5:
+	case 6:
+	case 7:
+	case 8:
+	case 9:
+	case 10:
+	case 11:
+	    /* STARS ARE ALWAYS HERE */
+	    return ret_val;
+	case 12:
+	    /* BIRD */
+            ret_val = rm >= rindex_1.fore1 && rm < rindex_1.clear || rm == rindex_1.mtree;
+            return ret_val;
+	case 13:
+	    /* TREE */
+	    ret_val = rm >= rindex_1.fore1 && rm < rindex_1.clear && rm != rindex_1.fore3;
+	    return ret_val;
+	case 14:
+	    /* NORTH WALL */
+	    ret_val = rm >= rindex_1.bkvw && rm <= rindex_1.bkbox || rm == rindex_1.cpuzz;
+	    return ret_val;
+	case 15:
+	case 16:
+	case 17:
+	    /* EAST, SOUTH, WEST WALLS */
+	    ret_val = rm >= rindex_1.bkvw && rm < rindex_1.bkbox || rm == rindex_1.cpuzz;
+	    return ret_val;
+	case 18:
+	    /* GLOBAL WATER */
+	    ret_val = (rooms_1.rflag[rm - 1] & RWATER + RFILL) != 0;
+	    return ret_val;
+	case 19:
+	    /* GLOBAL GUARDIANS */
+	    ret_val = rm >= rindex_1.mrc && rm <= rindex_1.mrd || rm >= rindex_1.mrce && rm <= rindex_1.mrdw || rm == rindex_1.inmir;
+	    return ret_val;
+	case 20:
+	case 23:
+	    /* ROSE/CHANNEL */
+	    ret_val = rm >= rindex_1.mra && rm <= rindex_1.mrd || rm == rindex_1.inmir;
+	    return ret_val;
+	case 21:
+	    /* MIRROR */
+	    ret_val = rm >= rindex_1.mra && rm <= rindex_1.mrc || rm >= rindex_1.mrae && rm <= rindex_1.mrcw;
+	    return ret_val;
+	case 22:
+	    /* PANEL */
+	    if (rm == rindex_1.fdoor) {
+		return ret_val;
+            }
+	    /* !PANEL AT FDOOR. */
+	    ret_val = rm >= rindex_1.mra && rm <= rindex_1.mrc || rm >= rindex_1.mrae && rm <= rindex_1.mrcw;
+	    return ret_val;
+
+	case 24:
+	    /* MASTER */
+	    ret_val = rm == rindex_1.fdoor || rm == rindex_1.ncorr || rm == rindex_1.parap || rm == rindex_1.cell;
+	    return ret_val;
+	case 25:
+	    /* LADDER */
+	    ret_val = rm == rindex_1.cpuzz;
+	    return ret_val;
     }
     bug_(60, obj);
-
-/* 1000--	STARS ARE ALWAYS HERE */
-
-L1000:
-    return ret_val;
-
-/* 2000--	BIRD */
-
-L2000:
-    ret_val = rm >= rindex_1.fore1 && rm < rindex_1.clear || rm == 
-	    rindex_1.mtree;
-    return ret_val;
-
-/* 3000--	TREE */
-
-L3000:
-    ret_val = rm >= rindex_1.fore1 && rm < rindex_1.clear && rm != 
-	    rindex_1.fore3;
-    return ret_val;
-
-/* 4000--	NORTH WALL */
-
-L4000:
-    ret_val = rm >= rindex_1.bkvw && rm <= rindex_1.bkbox || rm == 
-	    rindex_1.cpuzz;
-    return ret_val;
-
-/* 5000--	EAST, SOUTH, WEST WALLS */
-
-L5000:
-    ret_val = rm >= rindex_1.bkvw && rm < rindex_1.bkbox || rm == 
-	    rindex_1.cpuzz;
-    return ret_val;
-
-/* 6000--	GLOBAL WATER */
-
-L6000:
-    ret_val = (rooms_1.rflag[rm - 1] & RWATER + RFILL) != 0;
-    return ret_val;
-
-/* 7000--	GLOBAL GUARDIANS */
-
-L7000:
-    ret_val = rm >= rindex_1.mrc && rm <= rindex_1.mrd || rm >= 
-	    rindex_1.mrce && rm <= rindex_1.mrdw || rm == rindex_1.inmir;
-    return ret_val;
-
-/* 8000--	ROSE/CHANNEL */
-
-L8000:
-    ret_val = rm >= rindex_1.mra && rm <= rindex_1.mrd || rm == 
-	    rindex_1.inmir;
-    return ret_val;
-
-/* 9000--	MIRROR */
-/* 9100		PANEL */
-
-L9100:
-    if (rm == rindex_1.fdoor) {
-	return ret_val;
-    }
-/* 						!PANEL AT FDOOR. */
-L9000:
-    ret_val = rm >= rindex_1.mra && rm <= rindex_1.mrc || rm >= 
-	    rindex_1.mrae && rm <= rindex_1.mrcw;
-    return ret_val;
-
-/* 10000--	MASTER */
-
-L10000:
-    ret_val = rm == rindex_1.fdoor || rm == rindex_1.ncorr || rm == 
-	    rindex_1.parap || rm == rindex_1.cell;
-    return ret_val;
-
-/* 11000--	LADDER */
-
-L11000:
-    ret_val = rm == rindex_1.cpuzz;
-    return ret_val;
-
 } /* ghere_ */
 
 /* MRHERE--	IS MIRROR HERE? */
