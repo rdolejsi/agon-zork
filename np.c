@@ -39,7 +39,11 @@ L90:
     more_input();
 
     if (buffer[0] == '!') {
+#ifdef __AGON__
+        printf("Executing system command is not supported (yet).\n");
+#else
 	system(buffer + 1);
+#endif
 	goto L5;
     }
 
