@@ -10,6 +10,10 @@
 #include <amos.h>
 #endif
 
+#ifdef __AGON__
+#include <mos_api.h>
+#endif
+
 #include "funcs.h"
 #include "vars.h"
 
@@ -17,7 +21,11 @@
 
 extern void srand P((unsigned int));
 
+#ifdef __AGON__
+uint8_t dbfile;
+#else
 FILE *dbfile;
+#endif
 
 #ifndef TEXTFILE
 #ifdef __AMOS__
@@ -41,16 +49,29 @@ FILE *dbfile;
 
 /* Read a single two byte integer from the index file */
 
+#ifdef __AGON__
+static integer rdint(uint8_t indxfile)
+{
+    char ch1 = mos_fgetc(indxfile);
+    unsigned char ch2 = mos_fgetc(indxfile);
+    return (((int)ch1) << 8) | ch2;
+}
+#else
 #define rdint(indxfile) \
     (ch = getc(indxfile), \
      ((ch > 127) ? (ch - 256) : (ch)) * 256 + getc(indxfile))
+#endif /* ! __AGON__ */
 
 /* Read a number of two byte integers from the index file */
 
 static void rdints(c, pi, indxfile)
 integer c;
 integer *pi;
+#ifdef __AGON__
+uint8_t indxfile;
+#else
 FILE *indxfile;
+#endif
 {
     integer ch;	/* Local variable for rdint */
 
@@ -65,7 +86,11 @@ FILE *indxfile;
 static void rdpartialints(c, pi, indxfile)
 integer c;
 integer *pi;
+#ifdef __AGON__
+uint8_t indxfile;
+#else
 FILE *indxfile;
+#endif
 {
     integer ch;	/* Local variable for rdint */
 
@@ -73,7 +98,12 @@ FILE *indxfile;
 	int i;
 
 	if (c < 255) {
+#ifdef __AGON__
+	    i = mos_fgetc(indxfile);
+	    i = i < 0 ? 256 + i : i;
+#else
 	    i = getc(indxfile);
+#endif
 	    if (i == 255)
 		return;
 	}
@@ -92,10 +122,18 @@ FILE *indxfile;
 static void rdflags(c, pf, indxfile)
 integer c;
 logical *pf;
+#ifdef __AGON__
+uint8_t indxfile;
+#else
 FILE *indxfile;
+#endif
 {
     while (c-- != 0)
+#ifdef __AGON__
+	*pf++ = mos_fgetc(indxfile);
+#else
 	*pf++ = getc(indxfile);
+#endif
 }
 
 logical init_()
@@ -108,7 +146,11 @@ logical init_()
     integer xmax, r2max, dirmax, recno;
     integer i, j, k;
     register integer ch;
+#ifdef __AGON__
+    register uint8_t indxfile;
+#else
     register FILE *indxfile;
+#endif
     integer mmax, omax, rmax, vmax, amax, cmax, fmax, smax;
 
     more_init();
@@ -342,9 +384,14 @@ L10000:
     if ((dbfile = fdopen(ropen(LOCALTEXTFILE, 0), BINREAD)) == NULL &&
 	(dbfile = fdopen(ropen(TEXTFILE, 0), BINREAD)) == NULL)
 #else
+#ifdef __AGON__
+    if ((dbfile = mos_fopen(LOCALTEXTFILE, FA_READ)) == 0 &&
+        (dbfile = mos_fopen(TEXTFILE, FA_READ)) == 0)
+#else /* ! __AGON__ */
     if ((dbfile = fopen(LOCALTEXTFILE, BINREAD)) == NULL &&
 	(dbfile = fopen(TEXTFILE, BINREAD)) == NULL)
-#endif
+#endif /* ! __AGON__ */
+#endif /* ! __AMOS__ */
 	goto L1950;
 
     indxfile = dbfile;
@@ -419,7 +466,11 @@ L10000:
     rdints(rmsg_1.mlnt, &rmsg_1.rtext[0], indxfile);
 
 /* Save location of start of message text */
+#ifdef __AGON__
+    rmsg_1.mrloc = mos_getfil(indxfile)->fptr;
+#else
     rmsg_1.mrloc = ftell(indxfile);
+#endif
 
 /* 						!INIT DONE. */
 

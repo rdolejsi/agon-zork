@@ -8,11 +8,19 @@
 #include "funcs.h"
 #include "vars.h"
 
+#ifdef __AGON__
+#include <mos_api.h>
+#endif
+
 #ifndef SEEK_SET
 #define SEEK_SET (0)
 #endif
 
+#ifdef __AGON__
+extern uint8_t dbfile;
+#else
 extern FILE *dbfile;
+#endif
 
 static void rspsb2nl_ P((integer, integer, integer, logical));
 
@@ -80,7 +88,11 @@ logical nl;
 /* 						!SAID SOMETHING. */
 
     x = ((- x) - 1) * 8;
+#ifdef __AGON__
+    if (mos_flseek(dbfile, (uint32_t)rmsg_1.mrloc + x) == EOF) {
+#else
     if (fseek(dbfile, x + (long)rmsg_1.mrloc, SEEK_SET) == EOF) {
+#endif
 	fprintf(stderr, "Error seeking database loc %d\n", x);
 	exit_();
     }
@@ -91,7 +103,12 @@ logical nl;
     while (1) {
 	integer i;
 
+#ifdef __AGON__
+	i = mos_fgetc(dbfile);
+	i = i < 0 ? 256 + i : i;
+#else
 	i = getc(dbfile);
+#endif
 	if (i == EOF) {
 	    fprintf(stderr, "Error reading database loc %d\n", x);
 	    exit_();
@@ -106,11 +123,19 @@ logical nl;
 		more_output(NULL);
 	}
 	else if (i == '#' && y != 0) {
+#ifdef __AGON__
+	    uint32_t iloc;
+
+	    iloc = mos_getfil(dbfile)->fptr;
+	    rspsb2nl_(y, 0, 0, 0);
+	    if (mos_flseek(dbfile, iloc) == EOF) {
+#else
 	    long iloc;
 
 	    iloc = ftell(dbfile);
 	    rspsb2nl_(y, 0, 0, 0);
 	    if (fseek(dbfile, iloc, SEEK_SET) == EOF) {
+#endif
 		fprintf(stderr, "Error seeking database loc %d\n", iloc);
 		exit_();
 	    }
