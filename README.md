@@ -5,13 +5,53 @@ front door.
 There is a small mailbox here.
 >
 ```
-# DUNGEON (Zork I)
+# DUNGEON (Zork I) port for Agon Light
 
 Public Domain source code to the original DUNGEON game (Zork I). Released to the PD by Infocom. Includes 
 source files, headers, and information.
 
+The original repository is located at https://github.com/devshane/zork.
+This repository contains a genuine port of the game to
+the [Agon Light](https://www.thebyteattic.com/p/agon.html) 8-bit computer.
+
+# Building 
+
+The game is a tad large and would not fit in the 64k of standard Z80 RAM
+address space without extra C code optimization. Luckily, the Agon Light
+can utilize its eZ80's larger 24-bit address space and its 512k memory.
+
+## Compilation prerequisites
+
+The game runs in eZ80 ADL mode and requires C compiler capable of producing
+such code. The port was developed using AgDev LLVM compiler targetted for eZ80.
+Feel free to follow instructions at [AgDev GitHub page](https://github.com/pcawte/AgDev)
+to install the suite. It is by itself an adaptation of
+the [CE C/C++ Toolchain](https://ce-programming.github.io/toolchain/static/getting-started.html)
+originally created for the TI-84 calculator.
+
+_Please note: When placing AgDev on top of CEdev pack, don't try to build
+the latest version of C/CE++ from the source, but use the provided downloadable
+stable distribution. The AgDev placed on top of the latest C/CE++ built from source
+works just fine, but creates incorrect Agon binaries at the moment (as of Oct 4th, 2023)._
+
+## Making the binary
+
+The `Makefile` of the original project was adapted to follow CE C/C++ Toolchain guidance.
+Feel free to check `Makefile` for additional settings - Agon video mode and additional flags,
+alongside `agon.h` for more colorization and other settings.
+
+The build is executed using the below command:
+
 ```
 $ make
+```
+
+The build will produce object files in `obj/` directory and binary result in `dist/` directory.
+
+The following files need to be transfered to Agon Light (or Agon emulator start directory):
+```
+dist/zork.bin -> zork.bin
+dtextc.dat    -> zork.dat
 ```
 
 ## History of the C Implementation of Dungeon
@@ -127,3 +167,10 @@ to change the format of the database file.  Andre Srinivasan
 (andre@cs.pitt.edu) help test it.  Jonathan Mark
 (uunet!microsoft!jonm) made it work under MS-DOS and Microsoft C.
 
+VII. C port to Agon Light (4-oct-2023)
+
+Roman Dolejsi slightly adapted the original C code to work on eZ80
+8-bit CPU w/ 24-bit address space by utilizing the AgDev fork
+of LLVM-based CE C/C++ toolkit originally built for TI-84 calculator.
+As part of this port, colorization and video mode selection was added
+to the repository, currently working for Agon only.
