@@ -11,7 +11,7 @@
 #endif
 
 #ifdef __AGON__
-#include <mos_api.h>
+#include "agon.h"
 #endif
 
 #include "funcs.h"

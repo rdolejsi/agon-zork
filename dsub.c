@@ -9,7 +9,7 @@
 #include "vars.h"
 
 #ifdef __AGON__
-#include <mos_api.h>
+#include "agon.h"
 #endif
 
 #ifndef SEEK_SET
@@ -100,6 +100,10 @@ logical nl;
     if (nl)
 	more_output(NULL);
 
+#ifdef __AGON_COLORIZED__
+    vdp_set_text_colour(TERM_COLOR_SCENE);
+#endif
+
     while (1) {
 	integer i;
 
@@ -115,9 +119,12 @@ logical nl;
 	}
 	i ^= zkey[x & 0xf] ^ (x & 0xff);
 	x = x + 1;
-	if (i == '\0')
+	if (i == '\0') {
+#ifdef __AGON_COLORIZED__
+	    vdp_set_text_colour(TERM_COLOR_DIALOG);
+#endif
 	    break;
-	else if (i == '\n') {
+	} else if (i == '\n') {
 	    putchar('\n');
 	    if (nl)
 		more_output(NULL);
@@ -136,7 +143,13 @@ logical nl;
 	    rspsb2nl_(y, 0, 0, 0);
 	    if (fseek(dbfile, iloc, SEEK_SET) == EOF) {
 #endif
+#ifdef __AGON_COLORIZED__
+		vdp_set_text_colour(TERM_COLOR_ERROR);
+#endif
 		fprintf(stderr, "Error seeking database loc %d\n", iloc);
+#ifdef __AGON_COLORIZED__
+		vdp_set_text_colour(TERM_COLOR_DIALOG);
+#endif
 		exit_();
 	    }
 	    y = z;
